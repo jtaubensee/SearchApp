@@ -7,6 +7,7 @@ using SearchApp.iOS.Components.Renderers;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 [assembly: ExportRenderer(typeof(iOSSearchPage), typeof(SearchPageRenderer))]
 namespace SearchApp.iOS.Components.Renderers
@@ -95,9 +96,16 @@ namespace SearchApp.iOS.Components.Renderers
         protected override void OnElementChanged(VisualElementChangedEventArgs e)
         {
             base.OnElementChanged(e);
+            if (e.OldElement is iOSSearchPage oldSearchPage)
+            {
+                oldSearchPage.PropertyChanged -= this.OnSearchPagePropertyChanged;
+            }
+
             if (e.NewElement is iOSSearchPage iosSearchPage)
             {
+                iosSearchPage.PropertyChanged += this.OnSearchPagePropertyChanged;
                 this.searchController.SearchBar.Placeholder = iosSearchPage.SearchPlaceholder;
+                this.searchController.SearchBar.Text = iosSearchPage.SearchText;
 
                 Task.Run(async () =>
                 {
@@ -117,6 +125,14 @@ namespace SearchApp.iOS.Components.Renderers
                         }
                     }
                 });
+            }
+        }
+
+        private void OnSearchPagePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is iOSSearchPage iOSSearchPage && e.PropertyName.Equals(iOSSearchPage.SearchTextProperty.PropertyName))
+            {
+                this.searchController.SearchBar.Text = iOSSearchPage.SearchText;
             }
         }
 
