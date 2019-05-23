@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="SearchApp.Components.Controls.SearchView"
+    xmlns:converters="clr-namespace:SearchApp.Components.Converters"
+    xmlns:animations="clr-namespace:Xamanimation;assembly=Xamanimation"
+    x:Name="SearchLayoutView">
+    
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
+            <animations:FadeToAnimation
+                x:Key="PrimaryFadeIn"
+                Duration="200"
+                Opacity="1" 
+                Target="{x:Reference PrimaryContentView}" />
+            
+            <animations:FadeToAnimation
+                x:Key="PrimaryFadeOut"
+                Duration="200"
+                Opacity="0"
+                Target="{x:Reference PrimaryContentView}" />
+            
+            <animations:FadeToAnimation
+                x:Key="ResultsFadeIn"
+                Duration="200"
+                Opacity="1"
+                Target="{x:Reference ResultsContentView}" />
+            
+            <animations:FadeToAnimation
+                x:Key="ResultsFadeOut"
+                Duration="200"
+                Opacity="0"
+                Target="{x:Reference ResultsContentView}" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <Grid RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <ContentView
+                x:Name="PrimaryContentView"
+                Content="{Binding PrimaryView, Source={x:Reference SearchLayoutView}}"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Opacity="1">
+                <ContentView.Triggers>
+                    <DataTrigger
+                        TargetType="ContentView"
+                        Binding="{Binding Source={x:Reference SearchLayoutView}, Path=SearchEntry.IsSearchActive}"
+                        Value="False">
+                        <DataTrigger.EnterActions>
+                            <animations:BeginAnimation Animation="{StaticResource PrimaryFadeIn}" />
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <animations:BeginAnimation Animation="{StaticResource PrimaryFadeOut}" />
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                    <Trigger
+                        TargetType="ContentView"
+                        Property="Opacity"
+                        Value="0">
+                        <Setter Property="IsVisible" Value="False" />
+                    </Trigger>
+                    <DataTrigger
+                        TargetType="ContentView"
+                        Binding="{Binding Source={x:Reference PrimaryContentView}, Path=Opacity, Converter={StaticResource GreaterThanZeroConverter}}"
+                        Value="True">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </ContentView.Triggers>
+            </ContentView>
+            
+            <ContentView
+                x:Name="ResultsContentView"
+                Content="{Binding ResultsView, Source={x:Reference SearchLayoutView}}"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Opacity="0">
+                <ContentView.Triggers>
+                    <DataTrigger
+                        TargetType="ContentView"
+                        Binding="{Binding Source={x:Reference SearchLayoutView}, Path=SearchEntry.IsSearchActive}"
+                        Value="True">
+                        <DataTrigger.EnterActions>
+                            <animations:BeginAnimation Animation="{StaticResource ResultsFadeIn}" />
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <animations:BeginAnimation Animation="{StaticResource ResultsFadeOut}" />
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                    <Trigger
+                        TargetType="ContentView"
+                        Property="Opacity"
+                        Value="0">
+                        <Setter Property="IsVisible" Value="False" />
+                    </Trigger>
+                    <DataTrigger
+                        TargetType="ContentView"
+                        Binding="{Binding Source={x:Reference ResultsContentView}, Path=Opacity, Converter={StaticResource GreaterThanZeroConverter}}"
+                        Value="True">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </ContentView.Triggers>
+            </ContentView>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

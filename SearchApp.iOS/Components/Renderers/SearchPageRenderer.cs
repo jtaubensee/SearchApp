@@ -27,20 +27,19 @@ namespace SearchApp.iOS.Components.Renderers
             };
 
             this.searchController.SearchBar.Delegate = this;
-            this.searchController.SearchBar.SearchBarStyle = UISearchBarStyle.Default;
-            this.searchController.SearchBar.Translucent = true;
-            this.searchController.SearchBar.BarStyle = UIBarStyle.Black;
         }
 
         [Export("searchBarCancelButtonClicked:")]
         public void CancelButtonClicked(UISearchBar searchBar)
         {
-            if (this.Element is iOSSearchPage iosSearchPage
-                && iosSearchPage.SearchCancelledCommand != null
-                && iosSearchPage.SearchCancelledCommand.CanExecute(null))
+            if (this.Element is iOSSearchPage iosSearchPage)
             {
                 this.TextChanged(this.searchController.SearchBar, string.Empty);
-                iosSearchPage.SearchCancelledCommand.Execute(null);
+
+                if (iosSearchPage.SearchCancelledCommand != null && iosSearchPage.SearchCancelledCommand.CanExecute(null))
+                {
+                    iosSearchPage.SearchCancelledCommand.Execute(null);
+                }
             }
         }
 
@@ -116,8 +115,11 @@ namespace SearchApp.iOS.Components.Renderers
                             var handler = new FileImageSourceHandler();
                             var actionImage = await handler.LoadImageAsync(iosSearchPage.ActionImage);
 
-                            this.searchController.SearchBar.SetImageforSearchBarIcon(actionImage, UISearchBarIcon.Bookmark, UIControlState.Normal);
-                            this.searchController.SearchBar.ShowsBookmarkButton = true;
+                            InvokeOnMainThread(() =>
+                            {
+                                this.searchController.SearchBar.SetImageforSearchBarIcon(actionImage, UISearchBarIcon.Bookmark, UIControlState.Normal);
+                                this.searchController.SearchBar.ShowsBookmarkButton = true;
+                            });
                         }
                         catch (Exception ex)
                         {

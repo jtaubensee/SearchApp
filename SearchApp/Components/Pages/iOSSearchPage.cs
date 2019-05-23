@@ -1,10 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using SearchApp.Components.Controls;
 using Xamarin.Forms;
 
 namespace SearchApp.Components.Pages
 {
-    public class iOSSearchPage : ContentPage
+    public class iOSSearchPage : ContentPage, ISearchEntry
     {
         public static readonly BindableProperty SearchTextProperty = BindableProperty.Create(nameof(SearchText), typeof(string), typeof(iOSSearchPage), string.Empty, BindingMode.TwoWay);
         public static readonly BindableProperty SearchCommandProperty = BindableProperty.Create(nameof(SearchCommand), typeof(ICommand), typeof(iOSSearchPage), null, BindingMode.OneWay);
@@ -68,6 +69,12 @@ namespace SearchApp.Components.Pages
         {
             get => (ICommand)this.GetValue(ActionCommandProperty);
             set => this.SetValue(ActionCommandProperty, value);
+        }
+
+        string ISearchEntry.Placeholder
+        {
+            get => this.SearchPlaceholder;
+            set => this.SearchPlaceholder = value;
         }
 
         protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
